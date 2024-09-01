@@ -1,0 +1,81 @@
+<mat-stepper orientation="vertical" #stepper>
+    <mat-step [stepControl]="selectMappackFormGroup">
+        <div class="form-step">
+            <form [formGroup]="selectMappackFormGroup">
+                <ng-template matStepLabel>Select a Mappack</ng-template>
+                <mat-form-field style="width: 40%;">
+                    <mat-label>Select Mappack</mat-label>
+                    <mat-select [(value)]="selectedMappack">
+                        @for (mappack of mappacks; track mappack) {
+                            <mat-option [value]="mappack.id">{{mappack.name}}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+            </form>
+        </div>
+    </mat-step>
+    <mat-step [stepControl]="selectDifficultyFormGroup">
+        <div class="form-step">
+            <form [formGroup]="selectDifficultyFormGroup">
+                <ng-template matStepLabel>Select a Difficulty</ng-template>
+                <mat-form-field style="width: 40%;">
+                    <mat-label>Select Difficulty</mat-label>
+                    <mat-select [(value)]="selectedDifficulty">
+                        @for (difficulty of getDifficulties(); track difficulty) {
+                            <mat-option [value]="difficulty.id">{{difficulty.name}}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+            </form>
+        </div>
+    </mat-step>
+    <mat-step [stepControl]="selectDateFormGroup">
+        <div class="form-step">
+            <form [formGroup]="selectDateFormGroup">
+                <ng-template matStepLabel>Choose the Clear Date</ng-template>
+                <mat-form-field style="width: 40%;">
+                    <mat-label>Choose a date</mat-label>
+                    <input [formControl]="selectedDate" matInput [matDatepicker]="picker">
+                    <mat-hint>DD/MM/YYYY</mat-hint>
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+            </form>
+        </div>
+    </mat-step>
+    <mat-step>
+        <div class="form-step">
+            <ng-template matStepLabel>Other Settings + Output</ng-template>
+            <mat-slide-toggle [(ngModel)]="toggleBold" (change)="getResult()">Toggle <strong>Bold</strong></mat-slide-toggle>
+            <br><br>
+            <mat-slide-toggle [(ngModel)]="toggleItalic" (change)="getResult()">Toggle <i>Italic</i></mat-slide-toggle>
+            <br><br>
+            <mat-slide-toggle [(ngModel)]="toggleImage" (change)="getResult()">Toggle Image</mat-slide-toggle>
+            <br *ngIf="toggleImage"><br *ngIf="toggleImage">
+            <mat-form-field class="settings-textbox" *ngIf="toggleImage">
+                <mat-label>Image URL</mat-label>
+                <input matInput [(ngModel)]="imageURL" (ngModelChange)="getResult()" placeholder="https://www.example.com/image.png">
+            </mat-form-field>
+            <br *ngIf="toggleImage">
+            <mat-slide-toggle [(ngModel)]="toggleVideo" (change)="getResult()" *ngIf="toggleImage">Toggle Video</mat-slide-toggle>
+            <br *ngIf="toggleVideo"><br *ngIf="toggleVideo">
+            <mat-form-field class="settings-textbox" *ngIf="toggleVideo && toggleImage">
+                <mat-label>Video URL</mat-label>
+                <input matInput [(ngModel)]="videoURL" (ngModelChange)="getResult()" placeholder="https://www.youtube.com/watch?v=EXAMPLE">
+            </mat-form-field>
+            <br><br *ngIf="!toggleVideo">
+            <mat-slide-toggle [(ngModel)]="toggleTitle" (change)="getResult()">Toggle Title</mat-slide-toggle>
+            <br *ngIf="toggleTitle"><br *ngIf="toggleTitle">
+            <mat-slide-toggle [(ngModel)]="toggleCentered" (change)="getResult()" *ngIf="toggleTitle">Toggle Centered</mat-slide-toggle>
+            <br><br>
+            <p><strong>PREVIEW:</strong></p>
+            <div [innerHTML]="inner" id="result-preview"></div>
+            <p><strong>RESULT:</strong></p>
+            <mat-form-field class="result">
+                <mat-label>BBcode result will appear here</mat-label>
+                <textarea matInput [value]="getResult()" style="height: 250px;"></textarea>
+                <mat-hint align="start">Copy paste the BBcode into your me page!</mat-hint>
+            </mat-form-field>
+        </div>
+    </mat-step>
+</mat-stepper>

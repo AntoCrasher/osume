@@ -1,0 +1,52 @@
+<mat-stepper orientation="vertical" #stepper>
+    <mat-step [stepControl]="selectOsuDb">
+        <div class="form-step">
+            <form [formGroup]="selectOsuDb">
+                <ng-template matStepLabel>Select 'scores.db' file located at 'C:\Users\username\AppData\Local\osu!\scores.db'</ng-template>
+                <button type="button" mat-raised-button (click)="fileInput.click()">Choose File</button>
+                <input hidden (change)="onFileSelected()" accept=".db" #fileInput type="file" id="file">
+            </form>
+        </div>
+    </mat-step>
+    <mat-step>
+        <div class="form-step">
+            <ng-template matStepLabel>Other Settings + Output</ng-template>
+            <mat-slide-toggle [(ngModel)]="toggleBold" (change)="getResult()">Toggle <strong>Bold</strong></mat-slide-toggle>
+            <br><br>
+            <mat-slide-toggle [(ngModel)]="toggleItalic" (change)="getResult()">Toggle <i>Italic</i></mat-slide-toggle>
+            <br><br>
+            <mat-slide-toggle [(ngModel)]="toggleNonClear" (change)="getResult()">Toggle Non-Clear</mat-slide-toggle>
+            <br><br>
+            <mat-slide-toggle [(ngModel)]="toggleEmojiKey" (change)="getResult()">Toggle Emoji Key</mat-slide-toggle>
+            <br><br>
+            <mat-slide-toggle [(ngModel)]="toggleAccuracy" (change)="getResult()">Toggle Accuracy</mat-slide-toggle>
+            <br><br>
+            <mat-slide-toggle [(ngModel)]="toggleImage" (change)="getResult()" (change)="initializeToggles()">Toggle Image</mat-slide-toggle>
+            <br *ngIf="toggleImage"><br *ngIf="toggleImage">
+            @for (score of this.shownScores; track score) {
+                <mat-slide-toggle *ngIf="toggleImage" [(ngModel)]="toggleURLs[score]" (change)="getResult()"></mat-slide-toggle>
+                <mat-form-field class="settings-textbox" *ngIf="toggleImage">
+                    <mat-label>{{score}} Image URL</mat-label>
+                    <input matInput [(ngModel)]="imageURLs[score]" (ngModelChange)="getResult()">
+                </mat-form-field>
+                <mat-form-field class="settings-textbox" *ngIf="toggleImage">
+                    <mat-label>Video URL (Optional)</mat-label>
+                    <input matInput [(ngModel)]="videoURLs[score]" (ngModelChange)="getResult()">
+                </mat-form-field>
+                <br *ngIf="toggleImage">
+            }
+
+            <br *ngIf="!toggleImage"><br>
+            <mat-slide-toggle [(ngModel)]="toggleCentered" (change)="getResult()">Toggle Centered</mat-slide-toggle>
+            <br><br>
+            <p><strong>PREVIEW:</strong></p>
+            <div [innerHTML]="inner" id="result-preview"></div>
+            <p><strong>RESULT:</strong></p>
+            <mat-form-field class="result">
+                <mat-label>BBcode result will appear here</mat-label>
+                <textarea matInput [value]="getResult()" style="height: 250px;"></textarea>
+                <mat-hint align="start">Copy paste the BBcode into your me page!</mat-hint>
+            </mat-form-field>
+        </div>
+    </mat-step>
+</mat-stepper>

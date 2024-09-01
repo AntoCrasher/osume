@@ -1,0 +1,29 @@
+::ng-deep .mat-vertical-stepper-content {
+    visibility: visible !important;
+    height: 100% !important;
+}
+
+.form-step {
+    margin-top: 10px;
+    margin-bottom: -15px;
+}
+
+#result-preview {
+    background-color: #382e32;
+    padding: 20px;
+    margin: 10px;
+    margin-left: 0px;
+    border-radius: 10px;
+    font-family: InterRegular;
+}
+
+.result {
+    width: 100%;
+    height: 250px;
+}
+
+.settings-textbox {
+    width: 40%;
+    margin-left: 2%;
+    margin-right: 2%;
+}

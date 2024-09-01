@@ -1,0 +1,40 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+
+@font-face {
+    font-family: 'TorusRegular';
+    src: url('assets/fonts/torus/TorusRegular.otf');
+}
+
+@font-face {
+    font-family: 'InterRegular';
+    src: url('assets/fonts/inter/Inter-Regular.ttf');
+}
+
+body {
+    margin: 0;
+    font-family: TorusRegular;
+    background-color: #242023;
+
+    color: #e9e0e4;
+}
+.mat-stepper-vertical, .mat-toolbar, .mat-step-label, .mat-mdc-raised-button, .mat-mdc-slide-toggle, .mat-internal-form-field, .mat-mdc-tab {
+    font-family: TorusRegular !important;
+//     background-color: #23252c !important;
+//     color: #d3d3d4 !important;
+}
+
+// .mat-step-icon {
+//     background-color: #d3d3d4 !important;
+//     color: #23252c !important;
+
+// }
+
+// .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label, .mat-mdc-tab .mdc-tab__text-label {
+//     color: #d3d3d4 !important;
+// }
+
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

@@ -1,0 +1,113 @@
+::ng-deep .mat-vertical-stepper-content {
+  visibility: visible !important;
+  height: 100% !important;
+}
+
+
+
+a:link { text-decoration: none; }
+a:visited { text-decoration: none; }
+
+.form-step {
+  margin-top: 10px;
+  margin-bottom: -15px;
+}
+
+.text-green {
+  color: #00cb00;
+}
+
+.text-red {
+  color: #ff3232;
+}
+
+.score-container {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.score-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.grade {
+  font-size: 24px;
+  font-weight: bold;
+  color: #5ea3a3;
+  width: 30px;
+  text-align: center;
+}
+
+.details {
+  flex-grow: 1;
+  margin-left: 10px;
+}
+
+.title {
+  font-size: 18px;
+  color: #fff;
+}
+
+.artist, .score-info, .date {
+  font-size: 14px;
+  color: #888;
+}
+
+.score-stats {
+  text-align: right;
+}
+
+.pp, .score {
+  font-size: 16px;
+  color: #fff;
+  margin-left: 10px;
+}
+
+.pp {
+  font-weight: bold;
+}
+
+.score {
+  margin-top: 10px;
+}
+
+.grade .SS {
+  color: #d4af37;
+}
+
+.grade .SSH {
+  color: #C7C7C7;
+}
+
+.grade .S {
+  color: #d4af37;
+}
+
+.grade .SH {
+  color: #C7C7C7;
+}
+
+.grade .A {
+  color: #6BA35F;
+}
+
+.grade .B {
+  color: #5ea3a3;
+}
+
+.grade .C {
+  color: #A05FA3;
+}
+
+.grade .D {
+  color: #D43761;
+}

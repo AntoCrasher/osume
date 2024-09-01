@@ -1,0 +1,77 @@
+<div style="padding-top: 30px; margin-left: 40px; color: gray;">
+    <i>
+        NOTE 1 - Only osu!mania is supported (will not work with other modes)<br>
+        NOTE 2 - Estimation will only work if you have most of your scores locally (AKA you did not switch computers / you transfered your osu folder when switching)
+    </i>
+    <br><br>
+    <button type="button" mat-raised-button (click)="loadPlots()">Load Last Graph</button>
+</div>
+<mat-stepper orientation="vertical" #stepper>
+    <mat-step [stepControl]="enterUserInfromation">
+        <div class="form-step">
+            <form [formGroup]="enterUserInfromation">
+                <ng-template matStepLabel>Enter your user information</ng-template>
+                <mat-form-field class="example-full-width">
+                    <mat-label>Usernames</mat-label>
+                    <input matInput formControlName="enterUserInfromation" (ngModelChange)="updateUsernames()" placeholder="Ex. BTMC, BeastTrollMC">
+                  </mat-form-field>
+            </form>
+        </div>
+    </mat-step>
+    <mat-step [stepControl]="selectOsuFolder">
+        <div class="form-step">
+            <form [formGroup]="selectOsuFolder">
+                <ng-template matStepLabel>Select 'scores.db' and 'osu!.db' files located at 'C:\Users\username\AppData\Local\osu!\'</ng-template>
+                <button type="button" [disabled]="usernames.length == 0" mat-raised-button (click)="osuFolder.click()">Choose Files</button>
+                <input hidden type="file" #osuFolder multiple accept=".db" (change)="onScoresDBSelected($event)">
+                <span style="margin-left: 10px;"></span><button type="button" [disabled]="!osuDBSelected || !scoresDBSelected" mat-raised-button (click)="getBeatmapInfo()">Refresh Beatmap Info</button>
+            </form>
+            <!-- <form [formGroup]="selectOsuFolder">
+                <ng-template matStepLabel>Select 'osu!' folder located at 'C:\Users\username\AppData\Local\'</ng-template>
+                <button [disabled]="usernames.length == 0" type="button" mat-raised-button (click)="osuFolder.click()">Choose Folder</button>
+                <input hidden type="file" webkitdirectory directory multiple #osuFolder (change)="onOsuFolderSelected($event)">
+                <span style="margin-left: 10px;"></span><button [disabled]="!songsFolderSelected" type="button" mat-raised-button (click)="getBeatmapDiffs()">Refresh Difficulties</button>
+            </form> -->
+            <br>
+            <mat-icon class="text-green" *ngIf="scoresDBSelected" style="vertical-align: middle;" aria-hidden="false" aria-label="check" fontIcon="check"></mat-icon><mat-icon class="text-red" *ngIf="!scoresDBSelected" style="vertical-align: middle;" aria-hidden="false" aria-label="close" fontIcon="close"></mat-icon>scores.db loaded<br>
+            <mat-icon class="text-green" *ngIf="osuDBSelected" style="vertical-align: middle;" aria-hidden="false" aria-label="check" fontIcon="check"></mat-icon><mat-icon class="text-red" *ngIf="!osuDBSelected" style="vertical-align: middle;" aria-hidden="false" aria-label="close" fontIcon="close"></mat-icon>osu!.db loaded<br>
+            <!-- <mat-icon class="text-green" *ngIf="songsFolderSelected" style="vertical-align: middle;" aria-hidden="false" aria-label="check" fontIcon="check"></mat-icon><mat-icon class="text-red" *ngIf="!songsFolderSelected" style="vertical-align: middle;" aria-hidden="false" aria-label="close" fontIcon="close"></mat-icon>Songs folder loaded ({{songs_loaded}}/{{songs_count}})<br> -->
+            <mat-icon class="text-green" *ngIf="beatmap_info_retrieved" style="vertical-align: middle;" aria-hidden="false" aria-label="check" fontIcon="check"></mat-icon><mat-icon class="text-red" *ngIf="!beatmap_info_retrieved" style="vertical-align: middle;" aria-hidden="false" aria-label="close" fontIcon="close"></mat-icon>Beatmaps' info retrieved ({{beatmap_info_loaded}}/{{beatmap_info_count}}) <span *ngIf="beatmap_info_loaded < beatmap_info_count" style="color: gray;">- Missing beatmaps will be scanned automatically (Retry in a few minutes) (Missing = Inaccurate)</span><br>
+            <mat-icon class="text-green" *ngIf="scores_calculated" style="vertical-align: middle;" aria-hidden="false" aria-label="check" fontIcon="check"></mat-icon><mat-icon class="text-red" *ngIf="!scores_calculated" style="vertical-align: middle;" aria-hidden="false" aria-label="close" fontIcon="close"></mat-icon>Score PP calculated<br>
+            <mat-icon class="text-green" *ngIf="simulated" style="vertical-align: middle;" aria-hidden="false" aria-label="check" fontIcon="check"></mat-icon><mat-icon class="text-red" *ngIf="!simulated" style="vertical-align: middle;" aria-hidden="false" aria-label="close" fontIcon="close"></mat-icon>Rank graph simulated<br>
+        </div>
+    </mat-step>
+    <mat-step [stepControl]="result">
+      <div class="form-step">
+        <form [formGroup]="result">
+          <ng-template matStepLabel>Result PP Graph</ng-template>
+        </form>
+      </div>
+      <div class="chart-container">
+        <canvas id="PPGraph">{{ chart }}</canvas>
+      </div>
+      <button *ngIf="chart != null" type="button" mat-raised-button (click)="resetChartView()">Reset View</button>
+      <div id="score-container">
+        <div *ngIf="selectedBestPerformanceDate">
+          <br><br>
+          {{ best_performance_name.replace(' PP', '') }} Best Performance - {{ best_performance_time }}
+          <br><br>
+          <div class="score-container">
+            <div class="score-item" *ngFor="let score of best_performance" style="background: linear-gradient(to right, #30262e 30%, rgba(48, 38, 46, 0) 200%),url('https://assets.ppy.sh/beatmaps/{{score.beatmapset_id}}/covers/cover@2x.jpg');">
+              <div class="grade"><span class="{{score['grade_name']}}">{{score['grade']}}</span></div>
+              <div class="details">
+                <a class="title" href="https://osu.ppy.sh/beatmapsets/{{score.beatmapset_id}}#mania/{{score.beatmap_id}}">{{score['title']}}</a>
+                <span class="artist"> by {{score['artist']}}</span>
+                <div class="score-info">{{score['accuracy'].toFixed(2)}}% - {{score['difficulty']}} {{getFilteredMods(score['mods'])}}</div>
+                <a class="date" href="https://osu.ppy.sh/scores/mania/{{score.score_id}}">{{getDateFromTimestamp(score['timestamp'])}}</a>
+              </div>
+              <div class="score-stats">
+                <div class="pp">{{score['performance'].toFixed(2)}}pp</div>
+                <div class="score">{{score['score'].toLocaleString()}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-step>
+</mat-stepper>
