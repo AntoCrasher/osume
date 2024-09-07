@@ -502,10 +502,12 @@ export class PpGraphComponent {
 
     this.simulated = true;
     let keys = Object.keys(this.histories[0]);
-    this.best_performance = this.histories[0][keys[keys.length-1]]['best_performance'];
-    this.best_performance_name = this.key_count_names[0];
-    this.best_performance_time = this.getDateFromTimestamp(this.plot_day[keys.length-1]);
-    this.selectedBestPerformanceDate = true;
+    if (Object.keys(this.histories[0]).length > 0) {
+      this.best_performance = this.histories[0][keys[keys.length-1]]['best_performance'];
+      this.best_performance_name = this.key_count_names[0];
+      this.best_performance_time = this.getDateFromTimestamp(this.plot_day[keys.length-1]);
+      this.selectedBestPerformanceDate = true;
+    }
     this.savePlots();
     this.createChart();
   }
@@ -562,7 +564,6 @@ export class PpGraphComponent {
     if (this.chart != null) {
       this.chart.destroy()
     }
-
 
     let datasets: ChartDataset[] = [];
 

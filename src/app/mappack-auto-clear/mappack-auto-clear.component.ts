@@ -6,6 +6,7 @@ import { DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 
 import { parseScoresDB } from '../db-parser/db-parser.component'
+import { BehaviorSubject, combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-mappack-auto-clear',
@@ -61,7 +62,6 @@ export class MappackAutoClearComponent {
 
   ngOnInit() {
     this.loadURLs();
-    this.initializeToggles();
   }
 
   saveURLs() {
@@ -192,6 +192,7 @@ export class MappackAutoClearComponent {
 
     this.mappacks.forEach(mappack => {
       let count = 0;
+      let hasTitle = false;
       mappack.difficulties.forEach(difficulty => {
         if (difficulty.md5 in mappackScores) {
           let beatmap = mappackScores[difficulty.md5];
@@ -203,44 +204,48 @@ export class MappackAutoClearComponent {
 
           for (let score of scores) {
             if (score['mods']['half_time'])
-              continue
+              continue;
             if (!this.isPass(score, difficulty))
-              break
+              continue;
 
             if (this.isClear(score, difficulty))
-              clearType = ClearType.CLEAR
+              clearType = ClearType.CLEAR;
             else {
               if (clearType != ClearType.NONE){
-                break
+                break;
               }
-              clearType = ClearType.PASS
+              clearType = ClearType.PASS;
             }
-            best_score = score;
+
+            if (best_score == null || best_score['timestamp'] > score['timestamp'])
+              best_score = score;
           }
           if (clearType == ClearType.NONE) {
             for (let score of scores) {
               if (!score['mods']['half_time'])
-                continue
+                continue;
               if (!this.isPass(score, difficulty))
-                break
+                continue;
 
               if (this.isClear(score, difficulty))
-                clearType = ClearType.HTCLEAR
+                clearType = ClearType.HTCLEAR;
               else {
                 if (clearType != ClearType.NONE){
-                  break
+                  break;
                 }
-                clearType = ClearType.HTPASS
+                clearType = ClearType.HTPASS;
               }
 
-              best_score = score;
+              if (best_score == null || best_score['timestamp'] > score['timestamp'])
+                best_score = score;
             }
           }
+
           if (best_score != null) {
             if (this.toggleNonClear || clearType == ClearType.CLEAR) {
               count++;
             }
-            if (count == 1) {
+            if (count == 1 && !hasTitle) {
               resultBBcode += '[notice]';
               if (this.toggleCentered) {
                 resultBBcode += '[centre]';
@@ -250,6 +255,7 @@ export class MappackAutoClearComponent {
 
               resultBBcode += `[size=150][b][i]${mappack.name}[/i][/b][/size]\n`
               resultHTML += `<span style="font-size: 150%; color: white"><strong><i>${mappack.name}</i></strong></span><br><br>`
+              hasTitle = true;
             }
             let suffix: string = '';
             let accuracy = (best_score['accuracy'] * 100).toFixed(2);
@@ -268,6 +274,11 @@ export class MappackAutoClearComponent {
             fullname += ` - (${accuracy}%)`
 
             let toggleURL = this.toggleURLs[fullname];
+            if (!toggleURL) {
+              toggleURL = true;
+              this.toggleURLs[fullname] = true;
+            }
+
             let imageURL = this.imageURLs[fullname];
             let videoURL = this.videoURLs[fullname];
 
